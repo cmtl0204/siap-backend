@@ -247,19 +247,4 @@ export class AuthController {
       title: 'Existe',
     };
   }
-
-  @PublicRoute()
-  @Get('verify-ruc-pending-payment/:ruc')
-  @HttpCode(HttpStatus.OK)
-  async verifyRucPendingPayment(
-    @Param('ruc') ruc: string,
-  ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.authService.verifyRucPendingPayment(ruc);
-
-    return {
-      data: serviceResponse.data,
-      message: `Existe RUC`,
-      title: 'Existe',
-    };
-  }
 }

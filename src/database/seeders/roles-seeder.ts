@@ -13,10 +13,16 @@ export class RolesSeeder {
 
   private async createRoles() {
     const roles: CreateRoleDto[] = [];
-    roles.push({
-      code: RoleEnum.ADMIN,
-      name: 'Administrador',
-    });
+    roles.push(
+      {
+        code: RoleEnum.ADMIN,
+        name: 'Administrador',
+      },
+      {
+        code: RoleEnum.MANAGER,
+        name: 'Líder de Proyecto',
+      },
+    );
 
     for (const role of roles) {
       await this.rolesService.create(role);

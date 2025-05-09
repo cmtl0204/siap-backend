@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '@shared/dto';
 
-export class FilterCadastreDto extends PaginationDto {
+export class FilterProjectDto extends PaginationDto {
   @IsOptional()
   @IsString()
   readonly registerNumber: string;

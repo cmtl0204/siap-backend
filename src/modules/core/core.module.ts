@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
-import { DacModule } from '@modules/core/dac/dac.module';
+import { ManagerModule } from '@modules/core/roles/manager/manager.module';
 
 @Global()
 @Module({
-  imports: [DacModule],
+  imports: [ManagerModule],
 })
 export class CoreModule {}

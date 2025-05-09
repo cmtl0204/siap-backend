@@ -7,14 +7,15 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
-  ManyToOne, OneToOne,
+  ManyToOne, OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as Bcrypt from 'bcrypt';
 import { RoleEntity } from '@auth/entities';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { PaymentEntity } from '@modules/core/entities';
+import { ProjectEntity } from '@modules/core/entities';
 
 @Entity('users', { schema: 'auth' })
 export class UserEntity {
@@ -46,8 +47,8 @@ export class UserEntity {
   @ManyToMany(() => RoleEntity, (role) => role.users)
   roles: RoleEntity[];
 
-  @OneToOne(() => PaymentEntity)
-  payment: PaymentEntity;
+  @OneToMany(() => ProjectEntity, (entity) => entity.user)
+  projects: ProjectEntity[];
 
   /** Foreign Keys **/
   @ManyToOne(() => CatalogueEntity, { nullable: true })

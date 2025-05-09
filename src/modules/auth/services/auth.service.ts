@@ -30,7 +30,9 @@ import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { UsersService } from './users.service';
-import { PaymentEntity } from '@modules/core/entities';
+import { ProjectEntity } from '@modules/core/entities';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -41,12 +43,13 @@ export class AuthService {
     private repository: Repository<UserEntity>,
     @Inject(AuthRepositoryEnum.TRANSACTIONAL_CODE_REPOSITORY)
     private transactionalCodeRepository: Repository<TransactionalCodeEntity>,
-    @Inject(CoreRepositoryEnum.PAYMENT_REPOSITORY)
-    private paymentRepository: Repository<PaymentEntity>,
+    @Inject(CoreRepositoryEnum.PROJECT_REPOSITORY)
+    private projectRepository: Repository<ProjectEntity>,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly userService: UsersService,
     private jwtService: JwtService,
     private readonly nodemailerService: MailService,
+    private readonly httpService: HttpService,
   ) {}
 
   async changePassword(
@@ -111,7 +114,6 @@ export class AuthService {
       },
       relations: {
         roles: true,
-        payment: true,
       },
     });
 
@@ -128,20 +130,24 @@ export class AuthService {
         message: 'Su usuario se encuentra suspendido',
       });
 
+    if (payload.username.includes('@turismo.gob.ec')) {
+      if (!(await this.signInLDAP(payload)))
+        throw new UnauthorizedException({
+          error: 'Sin Autorización',
+          message: 'Usuario y/o contraseña no válidos',
+        });
+    }
+
     if (user?.maxAttempts === 0)
       throw new UnauthorizedException({
         error: 'Sin Autorización',
         message: 'Ha excedido el número máximo de intentos permitidos',
       });
 
-    if (user?.payment.hasDebt)
-      throw new UnauthorizedException({
-        error: 'El RUC ingresado mantiene pendiente el pago',
-        message:
-          'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
-      });
-
-    if (!(await this.checkPassword(payload.password, user))) {
+    if (
+      !payload.username.includes('@turismo.gob.ec') &&
+      !(await this.checkPassword(payload.password, user))
+    ) {
       throw new UnauthorizedException(
         `Usuario y/o contraseña no válidos, ${user.maxAttempts - 1} intentos restantes`,
       );
@@ -155,8 +161,17 @@ export class AuthService {
       data: {
         accessToken: await this.generateJwt(user),
         auth: userRest,
+        roles: userRest.roles,
       },
     };
+  }
+
+  async signInLDAP(payload: SignInDto): Promise<boolean> {
+    const url = `${this.configService.urlLDAP}/${payload.username.split('@')[0]}/${payload.password}`;
+
+    const response = await lastValueFrom(this.httpService.get(url));
+
+    return response.data.data;
   }
 
   async signUpExternal(
@@ -443,17 +458,5 @@ export class AuthService {
     const user = await this.repository.findOneBy({ identification });
 
     return { data: user };
-  }
-
-  async verifyRucPendingPayment(
-    ruc: string,
-  ): Promise<ServiceResponseHttpInterface> {
-    const payment = await this.paymentRepository.findOneBy({ ruc });
-
-    if (!payment) {
-      return { data: false };
-    }
-
-    return { data: payment?.hasDebt };
   }
 }

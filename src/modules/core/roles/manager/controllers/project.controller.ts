@@ -14,17 +14,20 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { ResponseHttpInterface } from '@shared/interfaces';
-import { CadastreService } from '@modules/core/dac/services/cadastre.service';
-import { CreateCadastreDto } from '@modules/core/dac/dto/cadastre';
+import { ProjectService } from '@modules/core/roles/manager/services/project.service';
+import {
+  CreateProjectDto,
+  UpdateProjectDto,
+} from '@modules/core/roles/manager/dto/project';
 import { PaginationDto } from '@shared/dto';
 
-@ApiTags('DAC Cadastre')
+@ApiTags('Manager Projects')
 @Auth()
-@Controller('core/dac/cadastres')
-export class CadastreController {
-  constructor(private service: CadastreService) {}
+@Controller('core/manager/projects')
+export class ProjectController {
+  constructor(private service: ProjectService) {}
 
-  @ApiOperation({ summary: 'List all Cadastres' })
+  @ApiOperation({ summary: 'List all Projects' })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
@@ -40,7 +43,23 @@ export class CadastreController {
     };
   }
 
-  @ApiOperation({ summary: 'Delete Cadastre' })
+  @ApiOperation({ summary: 'List all Projects By User' })
+  @Get('users/:userId')
+  @HttpCode(HttpStatus.OK)
+  async findByUser(
+    @Query('userId') userId: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findByUser(userId);
+
+    return {
+      data: serviceResponse.data,
+      pagination: serviceResponse.pagination,
+      message: `Registros Consultados`,
+      title: `Consultados`,
+    };
+  }
+
+  @ApiOperation({ summary: 'Delete Project' })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(
@@ -55,11 +74,11 @@ export class CadastreController {
     };
   }
 
-  @ApiOperation({ summary: 'Create Cadastre' })
+  @ApiOperation({ summary: 'Create Project' })
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Body() payload: CreateCadastreDto,
+    @Body() payload: CreateProjectDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);
 
@@ -70,12 +89,12 @@ export class CadastreController {
     };
   }
 
-  @ApiOperation({ summary: 'Update Cadastre' })
+  @ApiOperation({ summary: 'Update Project' })
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() payload: CreateCadastreDto,
+    @Body() payload: UpdateProjectDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.update(id, payload);
 
@@ -86,7 +105,7 @@ export class CadastreController {
     };
   }
 
-  @ApiOperation({ summary: 'Delete Cadastre' })
+  @ApiOperation({ summary: 'Delete Project' })
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async remove(

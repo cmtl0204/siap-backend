@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 
 @ApiTags('DAC Process Transport')
-@Controller('core/dac/process-transports')
+@Controller('core/manager/process-transports')
 export class ProcessTransportController {
   constructor(private catalogueService: CataloguesService) {}
 
