@@ -17,6 +17,7 @@ export class PaginateFilterService<T extends ObjectLiteral> {
       const whereConditions = searchFields.map(
         (field) => `entity.${field.toString()} ILIKE :search`,
       );
+
       queryBuilder.where(whereConditions.join(' OR '), {
         search: `%${search.trim()}%`,
       });
