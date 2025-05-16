@@ -15,4 +15,5 @@ export enum CommonRepositoryEnum {
 
 export enum CoreRepositoryEnum {
   PROJECT_REPOSITORY = 'PROJECT_REPOSITORY',
+  PROGRAM_REPOSITORY = 'PROGRAM_REPOSITORY',
 }

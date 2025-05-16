@@ -2,24 +2,24 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CommonRepositoryEnum, CoreRepositoryEnum } from '@shared/enums';
 import { ServiceResponseHttpInterface } from '@shared/interfaces';
-import { ProjectEntity } from '@modules/core/entities';
 import {
-  CreateProjectDto,
-  UpdateProjectDto,
-} from '@modules/core/roles/manager/dto/project';
+  CreateProgramDto,
+  UpdateProgramDto,
+} from '@modules/core/roles/manager/dto/prorgram';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { ProgramEntity } from '@modules/core/entities/program.entity';
 
 @Injectable()
-export class ProjectService {
-  private paginateFilterService: PaginateFilterService<ProjectEntity>;
+export class ProgramService {
+  private paginateFilterService: PaginateFilterService<ProgramEntity>;
 
   constructor(
-    @Inject(CoreRepositoryEnum.PROJECT_REPOSITORY)
-    private readonly repository: Repository<ProjectEntity>,
+    @Inject(CoreRepositoryEnum.PROGRAM_REPOSITORY)
+    private readonly repository: Repository<ProgramEntity>,
     @Inject(CommonRepositoryEnum.FILE_REPOSITORY)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly cataloguesService: CataloguesService,
@@ -28,7 +28,7 @@ export class ProjectService {
   }
 
   async create(
-    payload: CreateProjectDto,
+    payload: CreateProgramDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = this.repository.create(payload);
 
@@ -39,16 +39,9 @@ export class ProjectService {
     return this.paginateFilterService.execute(params, ['name', 'code']);
   }
 
-  async findProjectsByUser(
-    userId: string,
-  ): Promise<ServiceResponseHttpInterface> {
-    return { data: await this.repository.find({ where: { userId } }) };
-  }
-
   async findOne(id: string): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: { program: true },
     });
 
     if (!entity) {
@@ -60,7 +53,7 @@ export class ProjectService {
 
   async update(
     id: string,
-    payload: UpdateProjectDto,
+    payload: UpdateProgramDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOneBy({ id });
 

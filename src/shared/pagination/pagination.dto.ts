@@ -6,11 +6,11 @@ import {
 } from '@shared/dto-validation';
 
 export class PaginationDto {
-  @IsNotEmpty(isNotEmptyValidationOptions())
+  @IsOptional()
   @IsPositive(isPositiveValidationOptions())
   limit: number;
 
-  @IsNotEmpty(isNotEmptyValidationOptions())
+  @IsOptional()
   @IsPositive(isPositiveValidationOptions())
   page: number;
 

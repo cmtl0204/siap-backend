@@ -5,14 +5,15 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProgramEntity } from '@modules/core/entities/program.entity';
 import { UserEntity } from '@auth/entities';
+import { ProjectEntity } from '@modules/core/entities/project.entity';
 
-@Entity('projects', { schema: 'core' })
-export class ProjectEntity {
+@Entity('programs', { schema: 'core' })
+export class ProgramEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -49,29 +50,10 @@ export class ProjectEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToMany(() => ProjectEntity, (entity) => entity.program)
+  project: ProjectEntity[];
 
   /** Foreign Keys **/
-  @ManyToOne(() => ProgramEntity, { nullable: true })
-  @JoinColumn({ name: 'program_id' })
-  program: ProgramEntity;
-  @Column({
-    type: 'uuid',
-    name: 'program_id',
-    nullable: true,
-    comment: '',
-  })
-  programId: string;
-
-  @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
-  @Column({
-    type: 'uuid',
-    name: 'user_id',
-    nullable: true,
-    comment: '',
-  })
-  userId: string;
 
   /** Columns **/
   @Column({
@@ -85,32 +67,18 @@ export class ProjectEntity {
   amount: number;
 
   @Column({
-    name: 'code',
-    type: 'varchar',
-    comment: '',
-  })
-  code: string;
-
-  @Column({
-    name: 'coexecutor_management',
-    type: 'text',
-    comment: 'Subsecretaría ejecutora',
-  })
-  coexecutorManagement: string;
-
-  @Column({
-    name: 'executor_management',
-    type: 'text',
-    comment: 'Subsecretaría ejecutora',
-  })
-  executorManagement: string;
-
-  @Column({
     name: 'executor_undersecretary',
     type: 'text',
     comment: 'Subsecretaría ejecutora',
   })
   executorUndersecretary: string;
+
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    comment: '',
+  })
+  code: string;
 
   @Column({
     name: 'ended_at',

@@ -13,6 +13,16 @@ export class PaginateFilterService<T extends ObjectLiteral> {
 
     const queryBuilder = this.repository.createQueryBuilder('entity');
 
+    if (!limit) {
+      queryBuilder.orderBy('entity.createdAt', 'DESC');
+
+      const [data] = await queryBuilder.getManyAndCount();
+
+      return {
+        data,
+      };
+    }
+
     if (search) {
       const whereConditions = searchFields.map(
         (field) => `entity.${field.toString()} ILIKE :search`,

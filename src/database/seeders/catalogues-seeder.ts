@@ -17,9 +17,11 @@ export class CataloguesSeeder {
     await this.createEthnicOriginCatalogues();
     await this.createIdentificationTypeCatalogues();
     await this.createGenderCatalogues();
+    await this.createSexCatalogues();
     await this.createMaritalStatusCatalogues();
     await this.createYesNoCatalogues();
     await this.createYesNoNACatalogues();
+    await this.createProjectDocumentCatalogues();
   }
 
   private async createBloodTypeCatalogues(): Promise<void> {
@@ -334,6 +336,40 @@ export class CataloguesSeeder {
         sort: 1,
         state: CatalogueStateEnum.ENABLED,
         type: CatalogueTypeEnum.YES_NO_NA,
+      },
+    );
+
+    for (const catalogue of catalogues) {
+      await this.catalogueService.create(catalogue);
+    }
+  }
+
+  private async createProjectDocumentCatalogues() {
+    const catalogues: CreateCatalogueDto[] = [];
+    catalogues.push(
+      {
+        code: 'technicalFeasibilityDocument',
+        description: 'Viabilidad Técnica',
+        name: 'Viabilidad Técnica',
+        sort: 1,
+        state: CatalogueStateEnum.ENABLED,
+        type: CatalogueTypeEnum.TECHNICAL_FEASIBILITY_DOCUMENT,
+      },
+      {
+        code: 'approvalDocument',
+        description: 'Aprobación',
+        name: 'Aprobación',
+        sort: 1,
+        state: CatalogueStateEnum.ENABLED,
+        type: CatalogueTypeEnum.APPROVAL_DOCUMENT,
+      },
+      {
+        code: 'programDocument',
+        description: 'Documentos del programa',
+        name: 'Documentos del programa',
+        sort: 1,
+        state: CatalogueStateEnum.ENABLED,
+        type: CatalogueTypeEnum.PROGRAM_DOCUMENT,
       },
     );
 
