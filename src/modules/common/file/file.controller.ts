@@ -21,6 +21,8 @@ import { join } from 'path';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilterFileDto } from './dto';
 import * as fs from 'fs';
+import { User } from '@auth/decorators';
+import { UserEntity } from '@auth/entities';
 
 @ApiTags('Files')
 @Controller('common/files')
@@ -47,10 +49,15 @@ export class FileController {
     @UploadedFile() file: Express.Multer.File,
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query('typeId') typeId: string,
+    @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
-    console.log(`Upload File`);
-    const response = await this.filesService.uploadFile(file, modelId, typeId);
-    console.log(response);
+    const response = await this.filesService.uploadFile(
+      file,
+      modelId,
+      typeId,
+      user.id,
+    );
+
     return {
       data: response,
       message: 'Archivo Subido Correctamente',

@@ -6,7 +6,7 @@ import { ProjectEntity } from '@modules/core/entities';
 import {
   CreateProjectDto,
   UpdateProjectDto,
-} from '@modules/core/roles/manager/dto/project';
+} from '@modules/core/roles/operator/dto/project';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
@@ -92,7 +92,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };
@@ -107,6 +107,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };
@@ -121,6 +122,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };

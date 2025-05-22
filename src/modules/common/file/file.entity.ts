@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { UserEntity } from '@auth/entities';
 
 @Entity('files', { schema: 'common' })
 export class FileEntity {
@@ -55,6 +56,19 @@ export class FileEntity {
   modelId: string;
 
   /** Foreign Key **/
+  @ManyToOne(() => UserEntity, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'user_id',
+    nullable: true,
+    comment: 'usuario que sube el documento',
+  })
+  userId: string;
+
   @ManyToOne(() => CatalogueEntity, {
     nullable: true,
   })

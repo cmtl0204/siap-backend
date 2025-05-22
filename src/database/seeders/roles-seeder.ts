@@ -16,11 +16,15 @@ export class RolesSeeder {
     roles.push(
       {
         code: RoleEnum.ADMIN,
+        name: 'Admin',
+      },
+      {
+        code: RoleEnum.ADMINISTRATOR,
         name: 'Administrador',
       },
       {
-        code: RoleEnum.MANAGER,
-        name: 'Líder de Proyecto',
+        code: RoleEnum.OPERATOR,
+        name: 'Operador',
       },
     );
 

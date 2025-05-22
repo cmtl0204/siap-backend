@@ -3,23 +3,24 @@ import { Repository } from 'typeorm';
 import { CommonRepositoryEnum, CoreRepositoryEnum } from '@shared/enums';
 import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import {
-  CreateProgramDto,
-  UpdateProgramDto,
-} from '@modules/core/roles/manager/dto/prorgram';
+  CreateStrategicPlanDto,
+  UpdateStrategicPlanDto,
+} from '@modules/core/roles/operator/dto/strategic-plan';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProgramEntity } from '@modules/core/entities/program.entity';
+import { StrategicPlanEntity } from '@modules/core/entities';
 
 @Injectable()
-export class ProgramService {
-  private paginateFilterService: PaginateFilterService<ProgramEntity>;
+export class StrategicPlanService {
+  private paginateFilterService: PaginateFilterService<StrategicPlanEntity>;
 
   constructor(
-    @Inject(CoreRepositoryEnum.PROGRAM_REPOSITORY)
-    private readonly repository: Repository<ProgramEntity>,
+    @Inject(CoreRepositoryEnum.STRATEGIC_PLAN_REPOSITORY)
+    private readonly repository: Repository<StrategicPlanEntity>,
     @Inject(CommonRepositoryEnum.FILE_REPOSITORY)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly cataloguesService: CataloguesService,
@@ -28,7 +29,7 @@ export class ProgramService {
   }
 
   async create(
-    payload: CreateProgramDto,
+    payload: CreateStrategicPlanDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = this.repository.create(payload);
 
@@ -53,7 +54,7 @@ export class ProgramService {
 
   async update(
     id: string,
-    payload: UpdateProgramDto,
+    payload: UpdateStrategicPlanDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOneBy({ id });
 
@@ -85,7 +86,7 @@ export class ProgramService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true },
+      relations: { type: true, user: true },
     });
 
     return { data: entities };
@@ -100,6 +101,7 @@ export class ProgramService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
+      relations: { type: true, user: true },
     });
 
     return { data: entities };
@@ -114,6 +116,7 @@ export class ProgramService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
+      relations: { type: true, user: true },
     });
 
     return { data: entities };

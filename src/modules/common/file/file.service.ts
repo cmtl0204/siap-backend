@@ -16,7 +16,12 @@ export class FileService {
     private repository: Repository<FileEntity>,
   ) {}
 
-  async uploadFile(file: Express.Multer.File, modelId: string, typeId: string) {
+  async uploadFile(
+    file: Express.Multer.File,
+    modelId: string,
+    typeId: string,
+    userId: string,
+  ) {
     const filePath = `uploads/${new Date().getFullYear()}/${new Date().getMonth()}/${file.filename}`;
     const payload = {
       modelId,
@@ -26,6 +31,7 @@ export class FileService {
       path: filePath,
       size: file.size,
       typeId: typeId,
+      userId: userId,
     };
 
     const newFile = this.repository.create(payload);

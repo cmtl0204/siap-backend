@@ -14,26 +14,42 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { ResponseHttpInterface } from '@shared/interfaces';
-import { ProgramService } from '@modules/core/roles/manager/services/program.service';
+import { ProjectService } from '@modules/core/roles/operator/services/project.service';
 import {
-  CreateProgramDto,
-  UpdateProgramDto,
-} from '@modules/core/roles/manager/dto/prorgram';
+  CreateProjectDto,
+  UpdateProjectDto,
+} from '@modules/core/roles/operator/dto/project';
 import { PaginationDto } from '@shared/dto';
 
-@ApiTags('Manager Programs')
+@ApiTags('Manager Projects')
 @Auth()
-@Controller('core/manager/programs')
-export class ProgramController {
-  constructor(private service: ProgramService) {}
+@Controller('core/operator/projects')
+export class ProjectController {
+  constructor(private service: ProjectService) {}
 
-  @ApiOperation({ summary: 'List all Programs' })
+  @ApiOperation({ summary: 'List all Projects' })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() params: PaginationDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.findAll(params);
+
+    return {
+      data: serviceResponse.data,
+      pagination: serviceResponse.pagination,
+      message: `Registros Consultados`,
+      title: `Consultados`,
+    };
+  }
+
+  @ApiOperation({ summary: 'List all Projects By User' })
+  @Get('users/:userId')
+  @HttpCode(HttpStatus.OK)
+  async findProjectsByUser(
+    @Query('userId') userId: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findProjectsByUser(userId);
 
     return {
       data: serviceResponse.data,
@@ -62,7 +78,7 @@ export class ProgramController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Body() payload: CreateProgramDto,
+    @Body() payload: CreateProjectDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);
 
@@ -78,7 +94,7 @@ export class ProgramController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() payload: UpdateProgramDto,
+    @Body() payload: UpdateProjectDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.update(id, payload);
 

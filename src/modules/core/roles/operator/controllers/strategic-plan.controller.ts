@@ -14,42 +14,26 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { ResponseHttpInterface } from '@shared/interfaces';
-import { ProjectService } from '@modules/core/roles/manager/services/project.service';
 import {
-  CreateProjectDto,
-  UpdateProjectDto,
-} from '@modules/core/roles/manager/dto/project';
+  CreateStrategicPlanDto,
+  UpdateStrategicPlanDto,
+} from '@modules/core/roles/operator/dto/strategic-plan';
 import { PaginationDto } from '@shared/dto';
+import { StrategicPlanService } from '@modules/core/roles/operator/services/strategic-plan.service';
 
-@ApiTags('Manager Projects')
+@ApiTags('Manager Strategic Plans')
 @Auth()
-@Controller('core/manager/projects')
-export class ProjectController {
-  constructor(private service: ProjectService) {}
+@Controller('core/operator/strategic-plans')
+export class StrategicPlanController {
+  constructor(private service: StrategicPlanService) {}
 
-  @ApiOperation({ summary: 'List all Projects' })
+  @ApiOperation({ summary: 'List all Strategic Plans' })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() params: PaginationDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.findAll(params);
-
-    return {
-      data: serviceResponse.data,
-      pagination: serviceResponse.pagination,
-      message: `Registros Consultados`,
-      title: `Consultados`,
-    };
-  }
-
-  @ApiOperation({ summary: 'List all Projects By User' })
-  @Get('users/:userId')
-  @HttpCode(HttpStatus.OK)
-  async findProjectsByUser(
-    @Query('userId') userId: string,
-  ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.service.findProjectsByUser(userId);
 
     return {
       data: serviceResponse.data,
@@ -78,7 +62,7 @@ export class ProjectController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Body() payload: CreateProjectDto,
+    @Body() payload: CreateStrategicPlanDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);
 
@@ -94,7 +78,7 @@ export class ProjectController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() payload: UpdateProjectDto,
+    @Body() payload: UpdateStrategicPlanDto,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.update(id, payload);
 
