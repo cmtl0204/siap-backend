@@ -2,25 +2,24 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CommonRepositoryEnum, CoreRepositoryEnum } from '@shared/enums';
 import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { ProjectEntity } from '@modules/core/entities';
 import {
-  CreateStrategicPlanDto,
-  UpdateStrategicPlanDto,
-} from '@modules/core/roles/operator/dto/strategic-plan';
+  CreateProjectDto,
+  UpdateProjectDto,
+} from '@modules/core/roles/planner/dto/project';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { ProgramEntity } from '@modules/core/entities/program.entity';
-import { StrategicPlanEntity } from '@modules/core/entities';
 
 @Injectable()
-export class StrategicPlanService {
-  private paginateFilterService: PaginateFilterService<StrategicPlanEntity>;
+export class ProjectService {
+  private paginateFilterService: PaginateFilterService<ProjectEntity>;
 
   constructor(
-    @Inject(CoreRepositoryEnum.STRATEGIC_PLAN_REPOSITORY)
-    private readonly repository: Repository<StrategicPlanEntity>,
+    @Inject(CoreRepositoryEnum.PROJECT_REPOSITORY)
+    private readonly repository: Repository<ProjectEntity>,
     @Inject(CommonRepositoryEnum.FILE_REPOSITORY)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly cataloguesService: CataloguesService,
@@ -29,7 +28,7 @@ export class StrategicPlanService {
   }
 
   async create(
-    payload: CreateStrategicPlanDto,
+    payload: CreateProjectDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = this.repository.create(payload);
 
@@ -37,12 +36,19 @@ export class StrategicPlanService {
   }
 
   async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
-    return this.paginateFilterService.execute(params, ['name']);
+    return this.paginateFilterService.execute(params, ['name', 'code']);
+  }
+
+  async findProjectsByUser(
+    userId: string,
+  ): Promise<ServiceResponseHttpInterface> {
+    return { data: await this.repository.find({ where: { userId } }) };
   }
 
   async findOne(id: string): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOne({
       where: { id },
+      relations: { program: true },
     });
 
     if (!entity) {
@@ -54,7 +60,7 @@ export class StrategicPlanService {
 
   async update(
     id: string,
-    payload: UpdateStrategicPlanDto,
+    payload: UpdateProjectDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOneBy({ id });
 
@@ -86,7 +92,7 @@ export class StrategicPlanService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true, user: true },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };
@@ -101,7 +107,7 @@ export class StrategicPlanService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true, user: true },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };
@@ -116,7 +122,7 @@ export class StrategicPlanService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true, user: true },
+      relations: { type: true ,user:true},
     });
 
     return { data: entities };

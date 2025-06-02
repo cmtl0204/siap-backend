@@ -3,24 +3,23 @@ import { Repository } from 'typeorm';
 import { CommonRepositoryEnum, CoreRepositoryEnum } from '@shared/enums';
 import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import {
-  CreateStrategicPlanDto,
-  UpdateStrategicPlanDto,
-} from '@modules/core/roles/operator/dto/strategic-plan';
+  CreateProgramDto,
+  UpdateProgramDto,
+} from '@modules/core/roles/planner/dto/prorgram';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProgramEntity } from '@modules/core/entities/program.entity';
-import { StrategicPlanEntity } from '@modules/core/entities';
 
 @Injectable()
-export class StrategicPlanService {
-  private paginateFilterService: PaginateFilterService<StrategicPlanEntity>;
+export class ProgramService {
+  private paginateFilterService: PaginateFilterService<ProgramEntity>;
 
   constructor(
-    @Inject(CoreRepositoryEnum.STRATEGIC_PLAN_REPOSITORY)
-    private readonly repository: Repository<StrategicPlanEntity>,
+    @Inject(CoreRepositoryEnum.PROGRAM_REPOSITORY)
+    private readonly repository: Repository<ProgramEntity>,
     @Inject(CommonRepositoryEnum.FILE_REPOSITORY)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly cataloguesService: CataloguesService,
@@ -29,7 +28,7 @@ export class StrategicPlanService {
   }
 
   async create(
-    payload: CreateStrategicPlanDto,
+    payload: CreateProgramDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = this.repository.create(payload);
 
@@ -37,7 +36,7 @@ export class StrategicPlanService {
   }
 
   async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
-    return this.paginateFilterService.execute(params, ['name']);
+    return this.paginateFilterService.execute(params, ['name', 'code']);
   }
 
   async findOne(id: string): Promise<ServiceResponseHttpInterface> {
@@ -54,7 +53,7 @@ export class StrategicPlanService {
 
   async update(
     id: string,
-    payload: UpdateStrategicPlanDto,
+    payload: UpdateProgramDto,
   ): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOneBy({ id });
 

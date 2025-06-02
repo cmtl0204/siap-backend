@@ -19,8 +19,8 @@ export class RolesSeeder {
         name: 'Admin',
       },
       {
-        code: RoleEnum.ADMINISTRATOR,
-        name: 'Administrador',
+        code: RoleEnum.PLANNER,
+        name: 'Planificador',
       },
       {
         code: RoleEnum.OPERATOR,

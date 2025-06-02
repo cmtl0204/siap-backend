@@ -50,13 +50,6 @@ export class StrategicPlanEntity {
 
   /** Columns **/
   @Column({
-    name: 'code',
-    type: 'varchar',
-    comment: '',
-  })
-  code: string;
-
-  @Column({
     name: 'name',
     type: 'varchar',
     comment: '',

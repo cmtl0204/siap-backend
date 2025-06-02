@@ -5,7 +5,7 @@ import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import {
   CreateStrategicPlanDto,
   UpdateStrategicPlanDto,
-} from '@modules/core/roles/operator/dto/strategic-plan';
+} from '@modules/core/roles/planner/dto/strategic-plan';
 import { PaginationDto } from '@shared/dto';
 import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
 import { FileEntity } from '@modules/common/file/file.entity';
