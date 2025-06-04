@@ -92,7 +92,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true ,user:true},
+      relations: { type: true, user: true },
     });
 
     return { data: entities };
@@ -107,7 +107,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true ,user:true},
+      relations: { type: true, user: true },
     });
 
     return { data: entities };
@@ -122,7 +122,7 @@ export class ProjectService {
 
     const entities = await this.fileRepository.find({
       where: { modelId: id, typeId: catalogue.id },
-      relations: { type: true ,user:true},
+      relations: { type: true, user: true },
     });
 
     return { data: entities };
