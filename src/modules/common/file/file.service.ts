@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Equal, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
 import { CommonRepositoryEnum, MessageEnum } from '@shared/enums';
@@ -8,6 +14,7 @@ import * as fs from 'fs';
 import { PaginationDto } from '@shared/dto';
 import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { FilterFileDto } from './dto';
+import { fileExistsSync } from 'tsconfig-paths/lib/filesystem';
 
 @Injectable()
 export class FileService {
@@ -22,7 +29,23 @@ export class FileService {
     typeId: string,
     userId: string,
   ) {
+    if (!file) {
+      throw new BadRequestException('No se recibió ningún archivo');
+    }
+
     const filePath = `uploads/${new Date().getFullYear()}/${new Date().getMonth()}/${file.filename}`;
+
+    const fullPath = join(
+      process.cwd(),
+      'storage/private/uploads',
+      `${new Date().getFullYear()}/${new Date().getMonth()}`,
+      file.filename,
+    );
+
+    if (!fileExistsSync(fullPath)) {
+      throw new InternalServerErrorException('Error al guardar el archivo');
+    }
+
     const payload = {
       modelId,
       fileName: file.filename,
